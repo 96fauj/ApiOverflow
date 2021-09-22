@@ -13,16 +13,16 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvApp.Business", "CsvApp.B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvApp.Business.Tests", "CsvApp.Business.Tests\CsvApp.Business.Tests.csproj", "{6C3771B5-FC10-4A31-A0E4-40E3E14157ED}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{E4FEF6B4-0C1E-4733-BDD9-84AFEECF68ED}"
-	ProjectSection(SolutionItems) = preProject
-		Plan.md = Plan.md
-	EndProjectSection
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvApi", "CsvApi\CsvApi.csproj", "{D3251DAB-659C-4533-A28D-D97CFFC4177D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvApi.Tests", "CsvApi.Tests\CsvApi.Tests.csproj", "{3B68714D-5038-4FB2-9F4E-555A64FE94AB}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyDataLayer", "EnergyDataLayer\EnergyDataLayer.csproj", "{02537746-80D4-4B53-A590-E51FEF1A56CB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0BC2542A-9706-42DA-BC4F-C56192022F39}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
