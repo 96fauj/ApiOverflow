@@ -10,8 +10,9 @@ using CsvHelper.Configuration;
 
 namespace CsvApp.Business.Models
 {
-    public class MeterRow
+    public class MeterRow : IUniqueCsvEntity
     {
+        [CsvIdentifier]
         public int AccountId { get; set; }
         public DateTime MeterReadingDateTime { get; set; }
         public string MeterReadValue { get; set; }
@@ -19,23 +20,27 @@ namespace CsvApp.Business.Models
 
     public sealed class MeterRowMap : ClassMap<MeterRow>
     {
-        public MeterRowMap(MeterReadConfigSettings configSettings)
+        //public static MeterReadConfigSettings ConfigSettings { set; get; }
+
+        public MeterRowMap()
         {
-            var dateTimeConverter = new CsvDateTimeConverter(configSettings.DateFormat);
+            // var configSettings = serviceProvider.GetService<MeterReadConfigSettings>();
+
+            var dateTimeConverter = new CsvDateTimeConverter(MeterReadConfigSettings.DateFormat);
 
             Map(m => m.AccountId);
-            Map(m => m.MeterReadingDateTime).TypeConverterOption.Format(configSettings.DateFormat);
+            Map(m => m.MeterReadingDateTime).TypeConverterOption.Format(MeterReadConfigSettings.DateFormat);
             //Map(m => m.MeterReadingDateTime).TypeConverter(dateTimeConverter);
 
             Map(m => m.MeterReadValue).Validate(v =>
             {
-                var isCorrectFormat = Regex.IsMatch(v.Field, @configSettings.ReadValueRegex);
+                var isCorrectFormat = Regex.IsMatch(v.Field, MeterReadConfigSettings.ReadValueRegex);
                 return isCorrectFormat && !string.IsNullOrEmpty(v.Field);
             });
         }
     }
 
-    public class MeterParseResult : ICsvParseResult<MeterRowMap, MeterRow>
+    public class MeterParseResult : CsvParseResult<MeterRow, int>
     {
         public IEnumerable<MeterRow> GoodRows { get; set; }
         public IEnumerable<string> BadRows { get; set; }
@@ -43,57 +48,48 @@ namespace CsvApp.Business.Models
         public int Failed { get; set; }
     }
 
-    public class MeterRowParse
+    public class MeterRowParser
     {
         private Dictionary<int, MeterRow> _rows = new Dictionary<int, MeterRow>();
         private List<string> _badRows = new List<string>();
-        private readonly MeterReadConfigSettings _configSettings;
-        private readonly StreamReader _streamReader;
+        //private readonly MeterReadConfigSettings _configSettings;
 
-        public MeterRowParse(StreamReader streamReader, MeterReadConfigSettings configSettings)
+        //public MeterRowParser(MeterReadConfigSettings configSettings)
+        //{
+            
+        //}
+
+        public MeterParseResult ParseCsv(StreamReader streamReader)
         {
-            _configSettings = configSettings;
-            _streamReader = streamReader;
-        }
-
-        public MeterParseResult ParseCsv()
-        {
-            var isRowValid = true;
-
             var csvReaderConfig = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                HasHeaderRecord = true,
-                BadDataFound = arg =>
-                {
-                    isRowValid = false;
-                },
-                MissingFieldFound = arg =>
-                {
-                    isRowValid = false;
-                },
                 ReadingExceptionOccurred = ex =>
                 {
-                    isRowValid = false;
-
+                   _badRows.Add(ex.Exception.Context.Parser.RawRecord);
                     //_badRows.Add($"{ex.Exception.Context.Parser.RawRecord} // error {ex.Exception.Message}");
                     return false;
                 },
                 SanitizeForInjection = true // todo - review if future fields may require
             };
 
-            using (var csvReader = new CsvReader(_streamReader, csvReaderConfig))
+            using (var csvReader = new CsvReader(streamReader, csvReaderConfig))
             {
-                var map = new MeterRowMap(_configSettings);
+                var map = new MeterRowMap();
+                
                 csvReader.Context.RegisterClassMap(map);
 
                 while (csvReader.Read())
                 {
                     var record = csvReader.GetRecord<MeterRow>();
+                    if (record == null)
+                    {
+                        // this row didn't parse and has already been handled by the reading exception callback
+                        continue; 
+                    }
 
-                    if (record == null ||
-                        _rows.ContainsKey(record.AccountId) ||
-                        isRowValid ||
-                        !IsValidColumnCount(csvReader.Parser.Count, csvReader.HeaderRecord.Length))
+                    if (/*record == null ||*/
+                        _rows.ContainsKey(record.AccountId))
+                        //!IsValidColumnCount(csvReader.Parser.Count, csvReader.HeaderRecord.Length))
                     {
                         _badRows.Add(csvReader.Parser.RawRecord);
                     }
@@ -101,8 +97,6 @@ namespace CsvApp.Business.Models
                     {
                         _rows.Add(record.AccountId, record);
                     }
-
-                    isRowValid = true;
                 }
                 // end
             }
@@ -116,7 +110,7 @@ namespace CsvApp.Business.Models
             };
         }
 
-        private bool IsValidColumnCount(int recordColumns, int headerColumnCount)
+        private static bool IsValidColumnCount(int recordColumns, int headerColumnCount)
         {
             return recordColumns == headerColumnCount;
         }

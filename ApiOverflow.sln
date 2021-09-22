@@ -13,12 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvApp.Business", "CsvApp.B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvApp.Business.Tests", "CsvApp.Business.Tests\CsvApp.Business.Tests.csproj", "{6C3771B5-FC10-4A31-A0E4-40E3E14157ED}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Seed", "Seed", "{F1B58A8B-ED1A-4EDE-AE91-1815BF257E60}"
-	ProjectSection(SolutionItems) = preProject
-		E:\Downloads\Meter_Reading.csv = E:\Downloads\Meter_Reading.csv
-		E:\Downloads\Test_Accounts.csv = E:\Downloads\Test_Accounts.csv
-	EndProjectSection
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{E4FEF6B4-0C1E-4733-BDD9-84AFEECF68ED}"
 	ProjectSection(SolutionItems) = preProject
 		Plan.md = Plan.md
@@ -28,11 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvApi", "CsvApi\CsvApi.csp
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CsvApi.Tests", "CsvApi.Tests\CsvApi.Tests.csproj", "{3B68714D-5038-4FB2-9F4E-555A64FE94AB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DbModels", "DbModels", "{25DE83BE-147B-4A58-8537-843FC21402B5}"
-	ProjectSection(SolutionItems) = preProject
-		CustomerAccount.cs = CustomerAccount.cs
-		CustomerReading.cs = CustomerReading.cs
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyDataLayer", "EnergyDataLayer\EnergyDataLayer.csproj", "{02537746-80D4-4B53-A590-E51FEF1A56CB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -56,6 +46,10 @@ Global
 		{3B68714D-5038-4FB2-9F4E-555A64FE94AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3B68714D-5038-4FB2-9F4E-555A64FE94AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3B68714D-5038-4FB2-9F4E-555A64FE94AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{02537746-80D4-4B53-A590-E51FEF1A56CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{02537746-80D4-4B53-A590-E51FEF1A56CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{02537746-80D4-4B53-A590-E51FEF1A56CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{02537746-80D4-4B53-A590-E51FEF1A56CB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,10 +57,9 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{79AC1A52-676F-40F0-B828-C46E3A8AFBFF} = {93A6A7A3-0CCD-45B7-9AD6-F7099BAA452E}
 		{6C3771B5-FC10-4A31-A0E4-40E3E14157ED} = {93A6A7A3-0CCD-45B7-9AD6-F7099BAA452E}
-		{F1B58A8B-ED1A-4EDE-AE91-1815BF257E60} = {840F1EA7-584D-48F9-93FE-A60B9DF703FB}
 		{D3251DAB-659C-4533-A28D-D97CFFC4177D} = {E84F853F-E2F0-4EA9-8843-CCF971DBB26C}
 		{3B68714D-5038-4FB2-9F4E-555A64FE94AB} = {E84F853F-E2F0-4EA9-8843-CCF971DBB26C}
-		{25DE83BE-147B-4A58-8537-843FC21402B5} = {840F1EA7-584D-48F9-93FE-A60B9DF703FB}
+		{02537746-80D4-4B53-A590-E51FEF1A56CB} = {840F1EA7-584D-48F9-93FE-A60B9DF703FB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2991C7F0-5B17-4FE1-ACAC-6CE1528C0307}

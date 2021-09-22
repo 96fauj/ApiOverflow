@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CsvApp.Business
+﻿namespace CsvApp.Business
 {
-    public class MeterReadConfigSettings
+    public static class MeterReadConfigSettings
     {
-        public string DateFormat { get; set; }
-        public string ReadValueRegex { get; set; }
+        public static string DateFormat { get; set; }
+        public static string ReadValueRegex { get; set; }
     }
 }

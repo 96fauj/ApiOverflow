@@ -7,6 +7,8 @@
 - Swagger API Documentation (partly done, needs configuring)
 - CsvParser library - lets not reinvent the wheel, use their mapping and validation functionality
 
+- todo: stop returning the good / bad row domain models
+
 ## Business layer
 
 - Validation of columns using CsvReader inbuilt validation. It would have been better to use a different validation library instead
@@ -23,8 +25,9 @@ todo
 
 - Correct usage of cancellation token on meter-reading-uploads endpoint 
 so that the user can cancel/abort and the background operation disposes gracefully. 
-- Logging
+- Logging so that we can view the logs in something visual instead of relying on App logs
 - Consider if some/all api calls can be made asynchronous and if they provide
 a performance benefit 
 - On the csv output a proper validation error return to the consumer (e.g. the rawRecord string & 
 what value was not parsed or failed validation)
+

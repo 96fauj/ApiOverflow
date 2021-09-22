@@ -1,45 +1,75 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using CsvApp.Business.Interfaces;
-using CsvApp.Business.Models;
 using CsvHelper;
 using CsvHelper.Configuration;
 
 namespace CsvApp.Business.Helpers
 {
-    public class CsvHelper
+    public abstract class CsvHelper<TCsvEntity, TIdentifierType>
+        where TCsvEntity : IUniqueCsvEntity
     {
+        private CsvParseResult<TCsvEntity, TIdentifierType> _result = new CsvParseResult<TCsvEntity, TIdentifierType>();
+        internal abstract IEnumerable<ClassMap> ClassMaps { get; }
 
-
-        public IEnumerable<TObject> ParseCsvToEnumberable<TMapType, TObject>(Stream stream)
-            where TMapType : ClassMap<TObject>
+        private CsvConfiguration CsvConfig()
         {
-           using (var reader = new StreamReader(stream))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            return new CsvConfiguration(CultureInfo.InvariantCulture)
             {
-                csv.Context.RegisterClassMap<TMapType>();
-                // stream.Close();
-                return csv.GetRecords<TObject>().AsEnumerable();
+                ReadingExceptionOccurred = ex =>
+                {
+                    _result.BadRows.Add(ex.Exception.Context.Parser.RawRecord);
+                    //_badRows.Add($"{ex.Exception.Context.Parser.RawRecord} // error {ex.Exception.Message}");
+                    return false;
+                },
+                SanitizeForInjection = true // todo - review if future fields may require
+            };
+        }
+
+        public CsvParseResult<TCsvEntity, TIdentifierType> ParseCsv(StreamReader streamReader)
+        {
+            using (var csvReader = new CsvReader(streamReader, CsvConfig()))
+            {
+                SetupClassMaps(csvReader);
+
+                while (csvReader.Read())
+                {
+                    var record = csvReader.GetRecord<TCsvEntity>();
+                    if (record == null)
+                    {
+                        // this row didn't parse and has already been handled by the reading exception callback
+                        continue;
+                    }
+                    
+                    if (IsDuplicateRow(record))
+                    //!IsValidColumnCount(csvReader.Parser.Count, csvReader.HeaderRecord.Length))
+                    {
+                        _result.BadRows.Add(csvReader.Parser.RawRecord);
+                    }
+                    else
+                    {
+                        _result.GoodRows.Add((TIdentifierType)record.GetIdentifier(), record);
+                    }
+                }
+            }
+
+            return this._result;
+        }
+
+        private void SetupClassMaps(CsvReader csvReader)
+        {
+            foreach (var classMap in ClassMaps)
+            {
+                csvReader.Context.RegisterClassMap(classMap);
             }
         }
+
+        private bool IsDuplicateRow(TCsvEntity csvEntity)
+        {
+            var key = (TIdentifierType)csvEntity.GetIdentifier();
+
+            return _result.GoodRows.ContainsKey(key);
+        }
     }
-
-    //public abstract class CsvHelper<TMapType, TObject>
-    //    where TMapType : ClassMap<TObject>
-    //{
-    //    private IEnumerable<TObject> _rows { get; set; }
-    //    private IEnumerable<string> _badRows = new List<string>();
-
-    //    public ICsvParseResult<TMapType, TObject> CsvResult()
-    //    {
-    //        csvReader.Configuration.BadDataFound = context =>
-            
-    //            _badRows.Add(context.RawRecord);
-            
-
-    //        while (csvReader.Read() && !csvReader.Context.Parser.)
-    //    }
-    //}
 }

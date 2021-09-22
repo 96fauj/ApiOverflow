@@ -1,10 +1,10 @@
 using CsvApp.Business;
+using CsvApp.Business.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 
 namespace CsvApi
 {
@@ -22,13 +22,7 @@ namespace CsvApi
         {
             services.AddControllers();
 
-            // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen();
-
-            //services.Configure<MeterReadConfigSettings>(Configuration)
-            //    .AddSingleton(sp => sp.GetRequiredService<IOptions<MeterReadConfigSettings>>());
-
-            services.Configure<MeterReadConfigSettings>(Configuration.GetSection("MeterReadConfigSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -44,12 +38,10 @@ namespace CsvApi
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
-            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
-            // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "Meter Reading Api V1");
-                c.RoutePrefix = "swagger";
+                c.RoutePrefix = "swagger"; // endpoint
             });
 
             app.UseRouting();
@@ -60,6 +52,11 @@ namespace CsvApi
             {
                 endpoints.MapControllers();
             });
+
+            // Setup config static class
+            var config = Configuration.GetSection("MeterReadConfigSettings");
+            MeterReadConfigSettings.DateFormat = config.GetValue<string>("DateFormat");
+            MeterReadConfigSettings.ReadValueRegex = config.GetValue<string>("ReadValueRegex");
         }
     }
 }
