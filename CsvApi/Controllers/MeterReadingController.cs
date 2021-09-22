@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CsvApi.Helpers;
 using CsvApp.Business;
 using CsvApp.Business.Models;
+using CsvApp.Business.Parsers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
@@ -14,11 +15,6 @@ namespace CsvApi.Controllers
     [ApiController]
     public class MeterReadingController : ControllerBase
     {
-        //public MeterReadingController(IOptions<MeterReadConfigSettings> configSettings)
-        //{
-        //    _meterReadConfigSettings = configSettings.Value;
-        //}
-
         [HttpPost("meter-reading-uploads", Name = "meter-reading-uploads")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]

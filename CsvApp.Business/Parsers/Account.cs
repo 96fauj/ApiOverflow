@@ -3,7 +3,7 @@ using CsvApp.Business.Helpers;
 using CsvApp.Business.Interfaces;
 using CsvHelper.Configuration;
 
-namespace CsvApp.Business.Models
+namespace CsvApp.Business.Parsers
 {
     public class Account : IUniqueCsvEntity
     {
@@ -23,7 +23,7 @@ namespace CsvApp.Business.Models
         }
     }
 
-    public class AccountRowParser : CsvHelper<Account, int>
+    public class AccountRowParser : IdentityCsvParser<Account, int>
     {
         internal override IEnumerable<ClassMap> ClassMaps => new List<ClassMap>()
         {

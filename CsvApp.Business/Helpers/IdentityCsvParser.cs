@@ -7,7 +7,7 @@ using CsvHelper.Configuration;
 
 namespace CsvApp.Business.Helpers
 {
-    public abstract class CsvHelper<TCsvEntity, TIdentifierType>
+    public abstract class IdentityCsvParser<TCsvEntity, TIdentifierType>
         where TCsvEntity : IUniqueCsvEntity
     {
         private CsvParseResult<TCsvEntity, TIdentifierType> _result = new CsvParseResult<TCsvEntity, TIdentifierType>();
