@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 using CsvApi.Helpers;
-using CsvApp.Business;
 using CsvApp.Business.Models;
 using CsvApp.Business.Parsers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace CsvApi.Controllers
 {
@@ -55,7 +52,7 @@ namespace CsvApi.Controllers
             }
         }
 
-        private void PersistValidRows(IEnumerable<MeterRow> resultGoodRows)
+        private void PersistValidRows(IEnumerable<MeterRowCsvEntity> resultGoodRows)
         {
             throw new System.NotImplementedException();
         }

@@ -7,7 +7,7 @@ using CsvHelper.Configuration;
 
 namespace CsvApp.Business.Models
 {
-    public class MeterRow : IUniqueCsvEntity
+    public class MeterRowCsvEntity : IUniqueCsvEntity
     {
         [CsvIdentifier]
         public int AccountId { get; set; }
@@ -15,25 +15,21 @@ namespace CsvApp.Business.Models
         public string MeterReadValue { get; set; }
     }
 
-    public sealed class MeterRowMap : ClassMap<MeterRow>
+    public sealed class MeterRowMap : ClassMap<MeterRowCsvEntity>
     {
         public MeterRowMap()
         {
-            var dateTimeConverter = new CsvDateTimeConverter(MeterReadConfigSettings.DateFormat);
-
             Map(m => m.AccountId);
-            Map(m => m.MeterReadingDateTime).TypeConverterOption.Format(MeterReadConfigSettings.DateFormat);
-            //Map(m => m.MeterReadingDateTime).TypeConverter(dateTimeConverter);
-
+            Map(m => m.MeterReadingDateTime).TypeConverterOption.Format(MeterReadSettings.Settings.DateFormat);
             Map(m => m.MeterReadValue).Validate(v =>
             {
-                var isCorrectFormat = Regex.IsMatch(v.Field, MeterReadConfigSettings.ReadValueRegex);
+                var isCorrectFormat = Regex.IsMatch(v.Field, MeterReadSettings.Settings.ReadValueRegex);
                 return isCorrectFormat && !string.IsNullOrEmpty(v.Field);
             });
         }
     }
 
-    public class MeterRowParser : IdentityCsvParser<MeterRow, int>
+    public class MeterRowParser : IdentityCsvParser<MeterRowCsvEntity, int>
     {
         internal override IEnumerable<ClassMap> ClassMaps => new List<ClassMap>()
         {

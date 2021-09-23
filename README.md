@@ -30,3 +30,5 @@ a performance benefit
 - On the csv output a proper validation error return to the consumer (e.g. the rawRecord string & 
 what value was not parsed or failed validation)
 
+- Decouple the ef db context (data layer) from the web api completely
+avoiding services.AddDbContext<EnergyDbContext>(....

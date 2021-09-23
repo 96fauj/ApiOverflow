@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Reflection;
 using CsvApp.Business.Interfaces;
 using CsvHelper;
 using CsvHelper.Configuration;
@@ -55,6 +56,19 @@ namespace CsvApp.Business.Helpers
             }
 
             return this._result;
+        }
+
+        public CsvParseResult<TCsvEntity, TIdentifierType> ParseCsvFromResourceFile(string resourceLocation)
+        {
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            
+            using (Stream stream = assembly.GetManifestResourceStream(resourceLocation))
+            {
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    return this.ParseCsv(reader);
+                }
+            }
         }
 
         private void SetupClassMaps(CsvReader csvReader)

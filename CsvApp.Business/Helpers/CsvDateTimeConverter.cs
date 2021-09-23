@@ -6,7 +6,9 @@ using CsvHelper.TypeConversion;
 
 namespace CsvApp.Business.Helpers
 {
-    [Obsolete("No longer required as we only want to support a single date time format")]
+    // Usage
+    // var dateTimeConverter = new CsvDateTimeConverter(MeterReadConfigSettings.DateFormat);
+    // Map(m => m.MeterReadingDateTime).TypeConverter(dateTimeConverter);
     public class CsvDateTimeConverter : DateTimeConverter
     {
         private readonly string _dateFormat;
