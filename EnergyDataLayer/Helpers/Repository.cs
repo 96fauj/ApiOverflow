@@ -57,6 +57,11 @@ namespace EnergyDataLayer.Helpers
             return false;
         }
 
+        public void SaveChanges()
+        {
+            _context.SaveChanges();
+        }
+
         // We don't want to implement IDisposable in this Repository because .Net core's
         // dbcontext has been setup as 'scoped' meaning it will dispose after the request
         // and when we dispose manually e.g. in a repository the context will have been 

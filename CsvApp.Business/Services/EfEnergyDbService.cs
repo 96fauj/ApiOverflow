@@ -23,7 +23,6 @@ namespace CsvApp.Business.Services
 
         public bool AddMeterReading(IMeterRow reading)
         {
-            //var meterReadingRepo = new Repository<MeterReading>(_context);
             var dbEntity = _meterReadingRepo.Add(MapIMeterRowToMeterReading(reading));
             _context.SaveChanges();
             return dbEntity != null;
@@ -31,11 +30,17 @@ namespace CsvApp.Business.Services
 
         public int AddMeterReadings(IEnumerable<IMeterRow> readings)
         {
-            //var meterReadingRepo = new Repository<MeterReading>(_context);
             var dbEntities = _meterReadingRepo.AddRange(readings.Select(r => MapIMeterRowToMeterReading(r)));
             _context.SaveChanges();
             
             return dbEntities.Count();
+        }
+
+        public bool AddAccount(IAccount account)
+        {
+            var dbEntity = _accountRepo.Add(MapIAccountToAccount(account));
+            _context.SaveChanges();
+            return dbEntity != null;
         }
 
         private MeterReading MapIMeterRowToMeterReading(IMeterRow reading)
@@ -45,6 +50,16 @@ namespace CsvApp.Business.Services
                 AccountId = reading.AccountId,
                 ReadingDateTime = reading.MeterReadingDateTime,
                 ReadValue = reading.MeterReadValue
+            };
+        }
+
+        private Account MapIAccountToAccount(IAccount account)
+        {
+            return new Account
+            {
+                AccountId = account.AccountId,
+                FirstName = account.FirstName,
+                LastName = account.LastName
             };
         }
 
@@ -58,7 +73,7 @@ namespace CsvApp.Business.Services
             });
         }
 
-        IEnumerable<IAccount> IEnergyService.GetAllAccounts()
+        public IEnumerable<IAccount> GetAllAccounts()
         {
             return _accountRepo.GetAll().Select(a => new AccountCsvEntity()
             {

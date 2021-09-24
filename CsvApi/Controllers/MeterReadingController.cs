@@ -29,25 +29,14 @@ namespace CsvApi.Controllers
                 var parser = new MeterRowParser();
                 var csvParseResult = parser.ParseCsv(new StreamReader(file.OpenReadStream()));
                 var successfulRows = _energyService.AddMeterReadings(csvParseResult.GoodRows.Values);
-
-                var accounts = _energyService.GetAllAccounts();
-                var readings = _energyService.GetAllMeterReadings();
-
-                var debugResult = new
+                
+                var result = new
                 {
-                    response = new 
-                    {
-                        successful = successfulRows,
-                        failed = (csvParseResult.GoodRows.Count + csvParseResult.BadRows.Count) - successfulRows
-                    },
-                    debug = accounts.Select(a => new
-                    {
-                        account = a,
-                        readings = readings.Where(r => r.AccountId == a.AccountId)
-                    })
+                    successful = successfulRows,
+                    failed = (csvParseResult.GoodRows.Count + csvParseResult.BadRows.Count) - successfulRows
                 };
 
-                return Ok(debugResult);
+                return Ok(result);
             }
             else
             {

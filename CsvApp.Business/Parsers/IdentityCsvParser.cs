@@ -4,11 +4,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using CsvApp.Business.Helpers;
 using CsvApp.Business.Interfaces;
 using CsvHelper;
 using CsvHelper.Configuration;
 
-namespace CsvApp.Business.Helpers
+namespace CsvApp.Business.Parsers
 {
     public abstract class IdentityCsvParser<TCsvEntity, TIdentifierType>
         where TCsvEntity : IUniqueCsvEntity
