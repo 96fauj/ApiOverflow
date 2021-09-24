@@ -30,7 +30,6 @@ namespace CsvApp.Business.Services
             var dbEntities = meterReadingRepo.AddRange(readings.Select(r => MapIMeterRowToMeterReading(r)));
             _context.SaveChanges();
             
-            //return _context.SaveResult.SuccessfulAdds;
             return dbEntities.Count();
         }
 
