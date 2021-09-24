@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="Repository\Test_Accounts.csv" />
+    <None Remove="Services\Test_Accounts.csv" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Repository\Test_Accounts.csv" />
+    <EmbeddedResource Include="Test_Accounts.csv" />
   </ItemGroup>
 
   <ItemGroup>

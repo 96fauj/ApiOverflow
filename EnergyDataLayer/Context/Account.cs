@@ -7,7 +7,11 @@ namespace EnergyDataLayer.Context
     {
         [Key]
         public int AccountId { get; set; }
+
+        [Required]
         public string FirstName { get; set; }
+
+        [Required]
         public string LastName {  get; set; }
 
         public ICollection<MeterReading> MeterReadings { get; set; }

@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using CsvApp.Business.Config;
 using CsvApp.Business.Helpers;
 using CsvApp.Business.Interfaces;
 using CsvHelper.Configuration;
 
-namespace CsvApp.Business.Models
+namespace CsvApp.Business.Parsers
 {
-    public class MeterRowCsvEntity : IUniqueCsvEntity
+    public class MeterRowCsvEntity : IMeterRow
     {
         [CsvIdentifier]
         public int AccountId { get; set; }

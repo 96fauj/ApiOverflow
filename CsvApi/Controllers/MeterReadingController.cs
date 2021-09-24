@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CsvApi.Helpers;
-using CsvApp.Business.Models;
+using CsvApp.Business.Interfaces;
 using CsvApp.Business.Parsers;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -12,6 +13,11 @@ namespace CsvApi.Controllers
     [ApiController]
     public class MeterReadingController : ControllerBase
     {
+        public MeterReadingController(IEnergyRepo energyRepo)
+        {
+            _energyRepo = energyRepo;
+        }
+
         [HttpPost("meter-reading-uploads", Name = "meter-reading-uploads")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
@@ -21,10 +27,27 @@ namespace CsvApi.Controllers
             if (file.IsCsvFile())
             {
                 var parser = new MeterRowParser();
-                var result = parser.ParseCsv(new StreamReader(file.OpenReadStream()));
-                // PersistValidRows(result.GoodRows);
+                var csvParseResult = parser.ParseCsv(new StreamReader(file.OpenReadStream()));
+                var successfulRows = _energyRepo.AddMeterReadings(csvParseResult.GoodRows.Values);
 
-                return Ok(result);
+                var accounts = _energyRepo.GetAllAccounts();
+                var readings = _energyRepo.GetAllMeterReadings();
+
+                var debugResult = new
+                {
+                    response = new 
+                    {
+                        successful = successfulRows,
+                        failed = (csvParseResult.GoodRows.Count + csvParseResult.BadRows.Count) - successfulRows
+                    },
+                    debug = accounts.Select(a => new
+                    {
+                        account = a,
+                        readings = readings.Where(r => r.AccountId == a.AccountId)
+                    })
+                };
+
+                return Ok(debugResult);
             }
             else
             {
@@ -52,22 +75,27 @@ namespace CsvApi.Controllers
             }
         }
 
+        [HttpPost("get-accounts", Name = "get-accounts")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public IActionResult GetAccounts()
+        {
+            return Ok(_energyRepo.GetAllAccounts());
+        }
+
+        [HttpPost("get-meter-readings", Name = "get-meter-readings")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+        public IActionResult GetMeterReadings()
+        {
+            return Ok(_energyRepo.GetAllMeterReadings());
+        }
+
         private void PersistValidRows(IEnumerable<MeterRowCsvEntity> resultGoodRows)
         {
             throw new System.NotImplementedException();
         }
 
-        private static readonly string[] Summaries = new[]
-        {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
-
-        //private readonly MeterReadConfigSettings _meterReadConfigSettings;
-
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return Summaries;
-        }
+        private readonly IEnergyRepo _energyRepo;
     }
 }

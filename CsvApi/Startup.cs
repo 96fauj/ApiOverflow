@@ -1,7 +1,7 @@
-using CsvApp.Business;
-using CsvApp.Business.Models;
+using CsvApp.Business.Config;
+using CsvApp.Business.Interfaces;
 using CsvApp.Business.Parsers;
-using CsvApp.Business.Repository;
+using CsvApp.Business.Services;
 using EnergyDataLayer.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -27,6 +27,8 @@ namespace CsvApi
             services.AddDbContext<EnergyDbContext>(
                 opt => opt.UseInMemoryDatabase("EnergyDb"));
 
+            services.AddTransient<IEnergyRepo, EfEnergyDbService>();
+
             services.AddControllers();
 
             services.AddSwaggerGen();
@@ -42,7 +44,6 @@ namespace CsvApi
 
             app.UseHttpsRedirection();
 
-            // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
             app.UseSwaggerUI(c =>
@@ -65,16 +66,17 @@ namespace CsvApi
                 Configuration.GetSection("MeterReadConfigSettings").Get<MeterReadConfigSettings>();
             settings.SetupConfigValues();
 
-            SeedEfDatabase(app);
+            SeedEfDatabase(app, Configuration);
         }
 
-        private static void SeedEfDatabase(IApplicationBuilder app)
+        private static void SeedEfDatabase(IApplicationBuilder app, IConfiguration configuration)
         {
             using (var serviceScope = app.ApplicationServices.CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetService<EnergyDbContext>();
                 var parser = new AccountRowParser();
-                var result = parser.ParseCsvFromResourceFile("CsvApp.Business.Repository.Test_Accounts.csv");
+                var fileLocation = configuration.GetSection("AccountSeedFileLocation").Value;
+                var result = parser.ParseCsvFromResourceFile(fileLocation);
                 var accounts = parser.CsvEntityToAccounts(result.GoodRows.Values);
                 context.SeedAccounts(accounts);
             }

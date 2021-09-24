@@ -12,20 +12,24 @@ namespace EnergyDataLayer.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Account>()
+            var accountEntity = modelBuilder.Entity<Account>();
+
+            accountEntity
                 .HasKey(a => a.AccountId);
-            modelBuilder.Entity<Account>()
+            accountEntity
                 .HasMany(a => a.MeterReadings)
                 .WithOne(r => r.Account)
                 .HasForeignKey(r => r.AccountId)
                 .IsRequired();
 
-            modelBuilder.Entity<MeterReading>()
-                .HasKey(r => new { r.AccountId, r.ReadingDateTime});
-            modelBuilder.Entity<MeterReading>()
-                .HasIndex(r => r.AccountId);
-                
 
+            var meterReadEntity = modelBuilder.Entity<MeterReading>();
+
+            meterReadEntity
+                .HasKey(r => new { r.AccountId, r.ReadingDateTime});
+            meterReadEntity
+                .HasIndex(r => r.AccountId);
+            
             base.OnModelCreating(modelBuilder);
         }
     }

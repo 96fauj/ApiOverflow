@@ -7,7 +7,7 @@ using EnergyDataLayer.Context;
 
 namespace CsvApp.Business.Parsers
 {
-    public class AccountCsvEntity : IUniqueCsvEntity
+    public class AccountCsvEntity : IAccount
     {
         [CsvIdentifier]
         public int AccountId { get; set; }

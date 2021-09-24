@@ -15,7 +15,8 @@ so that when testing we don't have to setup streams to read/write - making the t
 
 ## Database
 
-todo 
+- Assumption: We only want to be able to enter a single MeterReading for an account that has the same date
+(Hence the primary key on the meterreading table is composite of AccountId and Date)
 
 - entity framework in memory database
 - seeds the initial data on load of application
@@ -32,3 +33,8 @@ what value was not parsed or failed validation)
 
 - Decouple the ef db context (data layer) from the web api completely
 avoiding services.AddDbContext<EnergyDbContext>(....
+- Automapper
+
+## TODO
+- Review TEntity Repository's TryAttach performance and review if it makes a single call
+when adding a range of entities 

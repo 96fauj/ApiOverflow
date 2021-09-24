@@ -1,4 +1,4 @@
-﻿namespace CsvApp.Business.Models
+﻿namespace CsvApp.Business.Config
 {
     public class MeterReadConfigSettings
     {
