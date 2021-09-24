@@ -93,7 +93,7 @@ namespace CsvApi
                 var parser = new AccountRowParser();
                 var fileLocation = configuration.GetSection("AccountSeedFileLocation").Value;
                 var result = parser.ParseCsvFromResourceFile(fileLocation);
-                var accounts = parser.CsvEntityToAccounts(result.GoodRows.Values);
+                var accounts = parser.CsvEntityToAccounts(result.Completed.Values);
                 context.SeedAccounts(accounts);
             }
         }

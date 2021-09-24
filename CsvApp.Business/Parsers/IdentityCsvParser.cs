@@ -23,7 +23,7 @@ namespace CsvApp.Business.Parsers
             {
                 ReadingExceptionOccurred = ex =>
                 {
-                    _result.BadRows.Add(ex.Exception.Context.Parser.RawRecord);
+                    _result.Failed.Add(ex.Exception.Context.Parser.RawRecord);
                     //_badRows.Add($"{ex.Exception.Context.Parser.RawRecord} // error {ex.Exception.Message}");
                     return false;
                 },
@@ -56,11 +56,11 @@ namespace CsvApp.Business.Parsers
                     if (IsDuplicateRow(record))
                     //!IsValidColumnCount(csvReader.Parser.Count, csvReader.HeaderRecord.Length))
                     {
-                        _result.BadRows.Add(csvReader.Parser.RawRecord);
+                        _result.Failed.Add(csvReader.Parser.RawRecord);
                     }
                     else
                     {
-                        _result.GoodRows.Add((TIdentifierType)record.GetIdentifier(), record);
+                        _result.Completed.Add((TIdentifierType)record.GetIdentifier(), record);
                     }
                 }
             }
@@ -93,7 +93,7 @@ namespace CsvApp.Business.Parsers
         {
             var key = (TIdentifierType)csvEntity.GetIdentifier();
 
-            return _result.GoodRows.ContainsKey(key);
+            return _result.Completed.ContainsKey(key);
         }
     }
 }

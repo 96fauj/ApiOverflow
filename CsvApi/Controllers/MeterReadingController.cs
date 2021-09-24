@@ -28,12 +28,12 @@ namespace CsvApi.Controllers
             {
                 var parser = new MeterRowParser();
                 var csvParseResult = parser.ParseCsv(new StreamReader(file.OpenReadStream()));
-                var successfulRows = _energyService.AddMeterReadings(csvParseResult.GoodRows.Values);
+                var successfulRows = _energyService.AddMeterReadings(csvParseResult.Completed.Values);
                 
                 var result = new
                 {
                     successful = successfulRows,
-                    failed = (csvParseResult.GoodRows.Count + csvParseResult.BadRows.Count) - successfulRows
+                    failed = (csvParseResult.SuccessfulCount + csvParseResult.FailedCount) - successfulRows
                 };
 
                 return Ok(result);
@@ -54,7 +54,6 @@ namespace CsvApi.Controllers
             {
                 var parser = new AccountRowParser();
                 var result = parser.ParseCsv(new StreamReader(file.OpenReadStream()));
-                // PersistValidRows(result.GoodRows);
 
                 return Ok(result);
             }
@@ -78,11 +77,6 @@ namespace CsvApi.Controllers
         public IActionResult GetMeterReadings()
         {
             return Ok(_energyService.GetAllMeterReadings());
-        }
-
-        private void PersistValidRows(IEnumerable<MeterRowCsvEntity> resultGoodRows)
-        {
-            throw new System.NotImplementedException();
         }
 
         private readonly IEnergyService _energyService;

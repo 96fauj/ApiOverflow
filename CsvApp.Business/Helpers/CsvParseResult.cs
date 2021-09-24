@@ -9,17 +9,17 @@ namespace CsvApp.Business.Helpers
     {
         public CsvParseResult()
         {
-            this.GoodRows = new Dictionary<TIdentifierType, TCsvEntity>();
-            this.BadRows = new List<string>();
+            this.Completed = new Dictionary<TIdentifierType, TCsvEntity>();
+            this.Failed = new List<string>();
         }
 
         [JsonIgnore]
-        public IDictionary<TIdentifierType, TCsvEntity> GoodRows { get; set; }
+        public IDictionary<TIdentifierType, TCsvEntity> Completed { get; set; }
 
         [JsonIgnore]
-        public List<string> BadRows { get; set; }
+        public List<string> Failed { get; set; }
 
-        public int Successful => this.GoodRows.Count;
-        public int Failed => this.BadRows.Count;
+        public int SuccessfulCount => this.Completed.Count;
+        public int FailedCount => this.Failed.Count;
     }
 }
