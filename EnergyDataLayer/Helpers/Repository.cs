@@ -13,6 +13,11 @@ namespace EnergyDataLayer.Helpers
             _context = context;
         }
 
+        public IEnumerable<TEntity> GetAll()
+        {
+            return _context.Set<TEntity>();
+        }
+
         public TEntity Add(TEntity entity)
         {
             if (TryAttach(entity))

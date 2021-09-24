@@ -13,9 +13,9 @@ namespace CsvApi.Controllers
     [ApiController]
     public class MeterReadingController : ControllerBase
     {
-        public MeterReadingController(IEnergyRepo energyRepo)
+        public MeterReadingController(IEnergyService energyService)
         {
-            _energyRepo = energyRepo;
+            _energyService = energyService;
         }
 
         [HttpPost("meter-reading-uploads", Name = "meter-reading-uploads")]
@@ -28,10 +28,10 @@ namespace CsvApi.Controllers
             {
                 var parser = new MeterRowParser();
                 var csvParseResult = parser.ParseCsv(new StreamReader(file.OpenReadStream()));
-                var successfulRows = _energyRepo.AddMeterReadings(csvParseResult.GoodRows.Values);
+                var successfulRows = _energyService.AddMeterReadings(csvParseResult.GoodRows.Values);
 
-                var accounts = _energyRepo.GetAllAccounts();
-                var readings = _energyRepo.GetAllMeterReadings();
+                var accounts = _energyService.GetAllAccounts();
+                var readings = _energyService.GetAllMeterReadings();
 
                 var debugResult = new
                 {
@@ -80,7 +80,7 @@ namespace CsvApi.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public IActionResult GetAccounts()
         {
-            return Ok(_energyRepo.GetAllAccounts());
+            return Ok(_energyService.GetAllAccounts());
         }
 
         [HttpPost("get-meter-readings", Name = "get-meter-readings")]
@@ -88,7 +88,7 @@ namespace CsvApi.Controllers
         [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
         public IActionResult GetMeterReadings()
         {
-            return Ok(_energyRepo.GetAllMeterReadings());
+            return Ok(_energyService.GetAllMeterReadings());
         }
 
         private void PersistValidRows(IEnumerable<MeterRowCsvEntity> resultGoodRows)
@@ -96,6 +96,6 @@ namespace CsvApi.Controllers
             throw new System.NotImplementedException();
         }
 
-        private readonly IEnergyRepo _energyRepo;
+        private readonly IEnergyService _energyService;
     }
 }

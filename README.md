@@ -35,8 +35,11 @@ what value was not parsed or failed validation)
 - Decouple the ef db context (data layer) from the web api completely
 avoiding services.AddDbContext<EnergyDbContext>(....
 - Automapper
+- Api level exception filtering, don't want to be returning a full call stack to the consumer 
+when something goes wrong
 
 ## TODO
 - Review TEntity Repository's TryAttach performance and review if it makes a single call
 when adding a range of entities 
 - Implement conditionally including (.Include(x => x.Account etc..) related entities on meterrow and account
+- Refactor controller, take processing logic outside of controller maybe into the business layer

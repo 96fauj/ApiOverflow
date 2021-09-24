@@ -1,10 +1,14 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using CsvApp.Business.Config;
 using CsvApp.Business.Interfaces;
 using CsvApp.Business.Parsers;
 using CsvApp.Business.Services;
 using EnergyDataLayer.Context;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -24,10 +28,12 @@ namespace CsvApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DbContext, EnergyDbContext>(
+                opt => opt.UseInMemoryDatabase("EnergyDb"));
             services.AddDbContext<EnergyDbContext>(
                 opt => opt.UseInMemoryDatabase("EnergyDb"));
 
-            services.AddTransient<IEnergyRepo, EfEnergyDbService>();
+            services.AddTransient<IEnergyService, EfEnergyDbService>();
 
             services.AddControllers();
 
@@ -67,6 +73,16 @@ namespace CsvApi
             settings.SetupConfigValues();
 
             SeedEfDatabase(app, Configuration);
+
+            app.UseExceptionHandler(a => a.Run(async context =>
+            {
+                var exceptionHandlerPathFeature = context.Features.Get<IExceptionHandlerPathFeature>();
+                var exception = exceptionHandlerPathFeature.Error;
+
+                var result = JsonSerializer.Serialize(new { error = exception.Message });
+                context.Response.ContentType = "application/json";
+                await context.Response.WriteAsync(result);
+            }));
         }
 
         private static void SeedEfDatabase(IApplicationBuilder app, IConfiguration configuration)

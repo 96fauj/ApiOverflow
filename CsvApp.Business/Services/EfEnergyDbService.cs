@@ -4,30 +4,35 @@ using CsvApp.Business.Interfaces;
 using CsvApp.Business.Parsers;
 using EnergyDataLayer.Context;
 using EnergyDataLayer.Helpers;
+using Microsoft.EntityFrameworkCore;
 
 namespace CsvApp.Business.Services
 {
-    public class EfEnergyDbService : IEnergyRepo
+    public class EfEnergyDbService : IEnergyService
     {
-        private readonly EnergyDbContext _context;
+        private readonly DbContext _context;
+        private readonly Repository<MeterReading> _meterReadingRepo;
+        private readonly Repository<Account> _accountRepo;
 
-        public EfEnergyDbService(EnergyDbContext context)
+        public EfEnergyDbService(DbContext context)
         {
             _context = context;
+            _meterReadingRepo = new Repository<MeterReading>(_context);
+            _accountRepo = new Repository<Account>(_context);
         }
 
         public bool AddMeterReading(IMeterRow reading)
         {
-            var meterReadingRepo = new Repository<MeterReading>(_context);
-            var dbEntity = meterReadingRepo.Add(MapIMeterRowToMeterReading(reading));
+            //var meterReadingRepo = new Repository<MeterReading>(_context);
+            var dbEntity = _meterReadingRepo.Add(MapIMeterRowToMeterReading(reading));
             _context.SaveChanges();
             return dbEntity != null;
         }
 
         public int AddMeterReadings(IEnumerable<IMeterRow> readings)
         {
-            var meterReadingRepo = new Repository<MeterReading>(_context);
-            var dbEntities = meterReadingRepo.AddRange(readings.Select(r => MapIMeterRowToMeterReading(r)));
+            //var meterReadingRepo = new Repository<MeterReading>(_context);
+            var dbEntities = _meterReadingRepo.AddRange(readings.Select(r => MapIMeterRowToMeterReading(r)));
             _context.SaveChanges();
             
             return dbEntities.Count();
@@ -45,7 +50,7 @@ namespace CsvApp.Business.Services
 
         public IEnumerable<IMeterRow> GetAllMeterReadings()
         {
-            return _context.MeterReadings.Select(a => new MeterRowCsvEntity()
+            return _meterReadingRepo.GetAll().Select(a => new MeterRowCsvEntity()
             {
                 AccountId = a.AccountId,
                 MeterReadValue = a.ReadValue,
@@ -53,9 +58,9 @@ namespace CsvApp.Business.Services
             });
         }
 
-        IEnumerable<IAccount> IEnergyRepo.GetAllAccounts()
+        IEnumerable<IAccount> IEnergyService.GetAllAccounts()
         {
-            return _context.Accounts.Select(a => new AccountCsvEntity()
+            return _accountRepo.GetAll().Select(a => new AccountCsvEntity()
             {
                 AccountId = a.AccountId,
                 FirstName = a.FirstName,

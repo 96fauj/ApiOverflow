@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using CsvApp.Business.Interfaces;
 using CsvHelper;
@@ -23,6 +25,13 @@ namespace CsvApp.Business.Helpers
                     _result.BadRows.Add(ex.Exception.Context.Parser.RawRecord);
                     //_badRows.Add($"{ex.Exception.Context.Parser.RawRecord} // error {ex.Exception.Message}");
                     return false;
+                },
+                HeaderValidated = context =>
+                {
+                    if (context.InvalidHeaders.Any())
+                    {
+                        throw new ArgumentException("Csv Headers invalid, check the file uploaded");
+                    }
                 },
                 SanitizeForInjection = true // todo - review if future fields may require
             };
